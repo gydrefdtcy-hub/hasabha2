@@ -1,0 +1,163 @@
+<!DOCTYPE html>
+<html lang="ar" dir="rtl">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>حاسبة زيادة الراتب - حاسبها</title>
+    <style>
+        :root {
+            --primary: #00b894; /* أخضر زاهي ومريح للعين */
+            --bg-body: #f8f9fa;
+            --text-dark: #2d3436;
+            --text-muted: #636e72;
+            --border-color: #dfe6e9;
+            --card-bg: #ffffff;
+            --result-bg: #1e272e; /* لون داكن فاخر للنتائج */
+        }
+        
+        body { font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif; background-color: var(--bg-body); margin: 0; padding: 20px; }
+        .container { max-width: 500px; margin: auto; background: var(--card-bg); padding: 30px 25px; border-radius: 16px; box-shadow: 0 10px 30px rgba(0,0,0,0.05); }
+        
+        h1 { text-align: center; color: var(--text-dark); font-size: 26px; margin-bottom: 5px; font-weight: 800; }
+        .subtitle { text-align: center; color: var(--text-muted); font-size: 14px; margin-top: 0; margin-bottom: 30px; }
+        
+        .input-group { margin-bottom: 25px; }
+        label { display: block; margin-bottom: 10px; font-weight: 600; color: var(--text-dark); font-size: 15px; }
+        
+        select, input[type="number"] { width: 100%; padding: 14px; border: 2px solid var(--border-color); border-radius: 8px; box-sizing: border-box; font-size: 16px; font-family: inherit; transition: all 0.3s ease; background-color: #fcfcfc; }
+        select:focus, input[type="number"]:focus { border-color: var(--primary); outline: none; background-color: #fff; box-shadow: 0 0 0 4px rgba(0, 184, 148, 0.1); }
+        
+        .slider-wrapper { display: flex; align-items: center; gap: 15px; margin-top: 15px; background: #f8f9fa; padding: 15px; border-radius: 8px; border: 1px solid var(--border-color); }
+        input[type="range"] { flex-grow: 1; accent-color: var(--primary); cursor: pointer; height: 6px; }
+        .percent-input { width: 85px !important; text-align: center; color: var(--primary); border: 2px solid var(--primary) !important; background: #e8f8f5 !important; font-weight: bold; font-size: 18px !important; }
+        
+        /* قسم النتائج بالتصميم الليلي الفاخر */
+        .live-results { background-color: var(--result-bg); color: #fff; padding: 25px; border-radius: 12px; margin-top: 35px; box-shadow: 0 8px 20px rgba(0,0,0,0.15); }
+        .result-item { display: flex; justify-content: space-between; align-items: center; margin-bottom: 20px; }
+        .result-item:last-child { margin-bottom: 0; padding-top: 20px; border-top: 1px solid rgba(255,255,255,0.1); }
+        
+        .result-label { font-size: 16px; color: #b2bec3; font-weight: 500; }
+        .result-value { font-size: 24px; font-weight: bold; color: var(--primary); }
+        .final-salary { font-size: 32px; color: #fff; }
+        .currency-label { font-size: 14px; margin-right: 5px; opacity: 0.8; }
+        
+        .ad-space { background: #f1f2f6; text-align: center; padding: 20px; margin-top: 30px; border: 2px dashed #ced6e0; border-radius: 10px; color: var(--text-muted); font-size: 14px; }
+        .hr-note { font-size: 13px; color: #e17055; margin-top: 25px; text-align: justify; line-height: 1.6; background: #fff3ed; padding: 15px; border-radius: 8px; border-right: 4px solid #e17055; }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <h1>حاسبة زيادة الراتب</h1>
+        <p class="subtitle">أداة تفاعلية لحساب الراتب الجديد بعد الترقية أو العلاوة السنوية</p>
+
+        <div class="input-group">
+            <label for="currency-select">العملة</label>
+            <select id="currency-select">
+                <option value="ريال سعودي">ريال سعودي (SAR)</option>
+                <option value="درهم إماراتي">درهم إماراتي (AED)</option>
+                <option value="دينار كويتي">دينار كويتي (KWD)</option>
+                <option value="ريال قطري">ريال قطري (QAR)</option>
+                <option value="ريال عماني">ريال عماني (OMR)</option>
+                <option value="دينار بحريني">دينار بحريني (BHD)</option>
+            </select>
+        </div>
+
+        <div class="input-group">
+            <label for="current-salary">الراتب المراد حساب الزيادة عليه</label>
+            <input type="number" id="current-salary" inputmode="numeric" placeholder="أدخل الراتب هنا..." value="5000">
+        </div>
+
+        <div class="input-group">
+            <label for="increase-percent">نسبة الزيادة المتوقعة</label>
+            <div class="slider-wrapper">
+                <input type="range" id="percent-slider" min="0" max="100" step="1" value="10">
+                <input type="number" id="percent-input" class="percent-input" min="0" max="1000" value="10">
+                <span style="font-weight:bold; color:var(--text-dark); font-size: 18px;">%</span>
+            </div>
+        </div>
+
+        <div class="live-results">
+            <div class="result-item">
+                <span class="result-label">مقدار الزيادة:</span>
+                <div class="result-value">
+                    <span id="increase-amount">500</span> 
+                    <span class="currency-label display-currency">ريال سعودي</span>
+                </div>
+            </div>
+            <div class="result-item">
+                <span class="result-label">الراتب الجديد:</span>
+                <div class="result-value final-salary">
+                    <span id="new-salary">5500</span> 
+                    <span class="currency-label display-currency" style="color: #b2bec3;">ريال سعودي</span>
+                </div>
+            </div>
+        </div>
+
+        <div class="ad-space">
+            مساحة مخصصة لدمج شفرة إعلانات Adsterra
+        </div>
+
+        <div class="hr-note">
+            <strong>💡 ملاحظة هامة للموظفين:</strong> في معظم عقود العمل في دول الخليج، يتم احتساب نسبة الزيادة السنوية أو الترقية بناءً على <strong>(الراتب الأساسي)</strong> فقط وليس (إجمالي الراتب) الذي يتضمن البدلات كالسكن والنقل. يرجى مراجعة سياسة الموارد البشرية (HR) في جهة عملك للحصول على الرقم الدقيق.
+        </div>
+    </div>
+
+    <script>
+        const currencySelect = document.getElementById('currency-select');
+        const currentSalaryInput = document.getElementById('current-salary');
+        const percentSlider = document.getElementById('percent-slider');
+        const percentInput = document.getElementById('percent-input');
+        
+        const increaseAmountDisplay = document.getElementById('increase-amount');
+        const newSalaryDisplay = document.getElementById('new-salary');
+        const currencyLabels = document.querySelectorAll('.display-currency');
+
+        // دالة تنسيق الأرقام لتوضيح الفواصل
+        function formatNumber(num) {
+            return num.toLocaleString('en-US', { minimumFractionDigits: 0, maximumFractionDigits: 2 });
+        }
+
+        // دالة التحديث اللحظي للعمليات الحسابية والعملة
+        function updateCalculations() {
+            const salary = parseFloat(currentSalaryInput.value) || 0;
+            const percentage = parseFloat(percentInput.value) || 0;
+            const selectedCurrency = currencySelect.value;
+
+            // تحديث نصوص العملة في واجهة النتائج
+            currencyLabels.forEach(label => {
+                label.textContent = selectedCurrency;
+            });
+
+            // العمليات الحسابية
+            const increaseAmount = salary * (percentage / 100);
+            const newSalary = salary + increaseAmount;
+
+            // عرض النتائج
+            increaseAmountDisplay.textContent = formatNumber(increaseAmount);
+            newSalaryDisplay.textContent = formatNumber(newSalary);
+        }
+
+        // ربط تغيير العملة بالتحديث
+        currencySelect.addEventListener('change', updateCalculations);
+
+        // المزامنة بين شريط التمرير ومربع إدخال النسبة
+        percentSlider.addEventListener('input', function() {
+            percentInput.value = this.value;
+            updateCalculations();
+        });
+
+        percentInput.addEventListener('input', function() {
+            if(this.value <= 100) {
+                percentSlider.value = this.value;
+            }
+            updateCalculations();
+        });
+
+        // التحديث الفوري عند تغيير الراتب
+        currentSalaryInput.addEventListener('input', updateCalculations);
+
+        // تشغيل التحديث مرة واحدة عند تحميل الصفحة لضبط القيم الافتراضية
+        updateCalculations();
+    </script>
+</body>
+</html>
