@@ -5,42 +5,51 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>منصة حاسبها - كل حساباتك في مكان واحد</title>
     <style>
-        /* المتغيرات الأساسية */
+        /* =========================================
+           1. المتغيرات الأساسية (الوضع الفاتح)
+           ========================================= */
         :root {
             --primary: #00b894; 
             --bg-color: #f8f9fa;
-            --card-bg: rgba(255, 255, 255, 0.85); /* شفافية لظهور الخلفية */
+            --card-bg: rgba(255, 255, 255, 0.85);
             --text-main: #2d3436;
             --text-muted: #636e72;
-            --border-color: rgba(223, 230, 233, 0.5);
-            --header-bg: rgba(255, 255, 255, 0.9);
-            --filter-bg: rgba(241, 242, 246, 0.8);
+            --border-color: rgba(223, 230, 233, 0.6);
+            --header-bg: rgba(255, 255, 255, 0.95);
+            --filter-bg: rgba(241, 242, 246, 0.85);
             --filter-text: #2d3436;
         }
 
-        /* المتغيرات للوضع الداكن الفاخر */
+        /* =========================================
+           2. المتغيرات الأساسية (الوضع الداكن الفاخر)
+           ========================================= */
         [data-theme="dark"] {
-            --primary: #f1c40f; /* لون ذهبي يتناسب مع الشعار */
+            --primary: #f1c40f; 
             --bg-color: #0f172a; 
-            --card-bg: rgba(30, 41, 59, 0.75); /* شفافية زجاجية داكنة */
+            --card-bg: rgba(30, 41, 59, 0.80); 
             --text-main: #f8fafc;
             --text-muted: #94a3b8;
-            --border-color: rgba(51, 65, 85, 0.5);
-            --header-bg: rgba(15, 23, 42, 0.9);
-            --filter-bg: rgba(30, 41, 59, 0.8);
+            --border-color: rgba(51, 65, 85, 0.6);
+            --header-bg: rgba(15, 23, 42, 0.95);
+            --filter-bg: rgba(30, 41, 59, 0.85);
             --filter-text: #cbd5e1;
         }
         
+        /* =========================================
+           3. التنسيقات العامة والخلفية المائية
+           ========================================= */
         body { 
             font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif; 
             background-color: var(--bg-color); 
-            margin: 0; padding: 0; color: var(--text-main); 
-            transition: background-color 0.3s, color 0.3s; 
+            margin: 0; 
+            padding: 0; 
+            color: var(--text-main); 
+            transition: background-color 0.4s ease, color 0.4s ease; 
             position: relative;
             min-height: 100vh;
         }
 
-        /* --- خلفية الشعار الفاخرة --- */
+        /* الشعار كخلفية شفافة */
         body::before {
             content: '';
             position: fixed;
@@ -48,79 +57,172 @@
             background-image: url('logo.png');
             background-size: cover;
             background-position: center;
-            opacity: 0.08; /* شفافية باهتة جداً لتعطي فخامة دون إزعاج القراءة */
+            opacity: 0.05; 
             z-index: -1;
             pointer-events: none;
+            transition: opacity 0.4s ease;
         }
         [data-theme="dark"] body::before {
-            opacity: 0.15; /* إبراز الشعار أكثر في الوضع الداكن */
+            opacity: 0.12; 
         }
         
-        /* الترويسة */
-        header { background-color: var(--header-bg); backdrop-filter: blur(10px); padding: 15px 20px; display: flex; justify-content: space-between; align-items: center; border-bottom: 1px solid var(--border-color); position: sticky; top: 0; z-index: 100; }
-        .logo { font-size: 24px; font-weight: 900; color: var(--primary); margin: 0; display: flex; align-items: center; gap: 8px; text-shadow: 0 2px 4px rgba(0,0,0,0.1); }
+        /* =========================================
+           4. الترويسة العلوية (Header)
+           ========================================= */
+        header { 
+            background-color: var(--header-bg); 
+            backdrop-filter: blur(12px); 
+            -webkit-backdrop-filter: blur(12px);
+            padding: 15px 20px; 
+            display: flex; 
+            justify-content: space-between; 
+            align-items: center; 
+            border-bottom: 1px solid var(--border-color); 
+            position: sticky; 
+            top: 0; 
+            z-index: 100; 
+            transition: all 0.4s ease;
+        }
+        .logo { 
+            font-size: 24px; 
+            font-weight: 900; 
+            color: var(--primary); 
+            margin: 0; 
+            display: flex; 
+            align-items: center; 
+            gap: 5px; 
+        }
         .logo span { color: var(--text-main); }
         
         .header-controls { display: flex; gap: 10px; }
-        .control-btn { background: var(--card-bg); border: 1px solid var(--border-color); color: var(--text-main); padding: 8px 12px; border-radius: 8px; cursor: pointer; font-weight: bold; font-size: 14px; transition: 0.3s; backdrop-filter: blur(5px); }
-        .control-btn:hover { border-color: var(--primary); color: var(--primary); }
+        .control-btn { 
+            background: var(--card-bg); 
+            border: 1px solid var(--border-color); 
+            color: var(--text-main); 
+            padding: 8px 14px; 
+            border-radius: 8px; 
+            cursor: pointer; 
+            font-weight: 700; 
+            font-size: 14px; 
+            transition: all 0.3s ease; 
+        }
+        .control-btn:hover { border-color: var(--primary); color: var(--primary); transform: translateY(-2px); }
 
+        /* =========================================
+           5. قسم الترحيب والفلاتر
+           ========================================= */
         .hero { text-align: center; padding: 40px 20px 20px; position: relative; z-index: 1; }
-        .hero h1 { font-size: 32px; margin-bottom: 10px; font-weight: 800; }
+        .hero h1 { font-size: 32px; margin-bottom: 10px; font-weight: 800; letter-spacing: -0.5px; }
         .hero p { font-size: 16px; color: var(--text-muted); max-width: 600px; margin: 0 auto; line-height: 1.6; }
 
         .container { max-width: 1000px; margin: 0 auto; padding: 20px; position: relative; z-index: 1; }
 
-        .filters-container { display: flex; flex-wrap: wrap; gap: 10px; justify-content: center; margin-bottom: 30px; margin-top: 20px; }
-        .filter-btn { background-color: var(--filter-bg); color: var(--filter-text); border: 1px solid var(--border-color); padding: 10px 20px; border-radius: 50px; font-size: 15px; font-weight: 600; cursor: pointer; transition: all 0.3s ease; backdrop-filter: blur(5px); }
-        .filter-btn.active { background-color: var(--primary); color: #fff; border-color: var(--primary); }
+        .filters-container { display: flex; flex-wrap: wrap; gap: 10px; justify-content: center; margin-bottom: 30px; margin-top: 10px; }
+        .filter-btn { 
+            background-color: var(--filter-bg); 
+            color: var(--filter-text); 
+            border: 1px solid var(--border-color); 
+            padding: 10px 22px; 
+            border-radius: 50px; 
+            font-size: 14px; 
+            font-weight: 700; 
+            cursor: pointer; 
+            transition: all 0.3s ease; 
+            backdrop-filter: blur(5px); 
+        }
+        .filter-btn.active { background-color: var(--primary); color: #fff; border-color: var(--primary); box-shadow: 0 4px 10px rgba(0,0,0,0.1); }
+        .filter-btn:hover:not(.active) { transform: translateY(-2px); border-color: var(--primary); }
         
-        /* تأثير الزجاج على البطاقات */
+        /* =========================================
+           6. شبكة البطاقات (Cards Grid)
+           ========================================= */
         .grid { display: grid; grid-template-columns: repeat(auto-fill, minmax(300px, 1fr)); gap: 20px; }
-        .card { background-color: var(--card-bg); backdrop-filter: blur(12px); border-radius: 16px; padding: 25px; text-decoration: none; border: 1px solid var(--border-color); transition: all 0.3s ease; display: block; color: inherit; position: relative; overflow: hidden; box-shadow: 0 4px 15px rgba(0,0,0,0.05); }
-        .card:hover { transform: translateY(-5px); border-color: var(--primary); box-shadow: 0 10px 30px rgba(0,0,0,0.15); }
+        .card { 
+            background-color: var(--card-bg); 
+            backdrop-filter: blur(16px); 
+            -webkit-backdrop-filter: blur(16px);
+            border-radius: 16px; 
+            padding: 25px; 
+            text-decoration: none; 
+            border: 1px solid var(--border-color); 
+            transition: all 0.3s ease; 
+            display: block; 
+            color: inherit; 
+            position: relative; 
+            overflow: hidden; 
+            box-shadow: 0 8px 20px rgba(0,0,0,0.03); 
+        }
+        .card:hover { transform: translateY(-5px); border-color: var(--primary); box-shadow: 0 12px 30px rgba(0,0,0,0.12); }
         .card::before { content: ''; position: absolute; top: 0; right: 0; width: 4px; height: 100%; background-color: var(--primary); opacity: 0; transition: 0.3s; }
         .card:hover::before { opacity: 1; }
         
         .card-header { display: flex; align-items: center; gap: 15px; margin-bottom: 12px; }
-        .card-icon { font-size: 28px; }
+        .card-icon { font-size: 26px; }
         .card h3 { margin: 0; font-size: 18px; color: var(--text-main); font-weight: 700; }
         .card p { margin: 0; font-size: 14px; color: var(--text-muted); line-height: 1.6; }
         
-        .ad-space { background: var(--card-bg); backdrop-filter: blur(10px); text-align: center; padding: 20px; margin: 30px auto; border: 2px dashed var(--border-color); border-radius: 12px; color: var(--text-muted); font-size: 14px; max-width: 800px; }
+        /* =========================================
+           7. المساحات الإعلانية
+           ========================================= */
+        .ad-space { 
+            background: var(--card-bg); 
+            backdrop-filter: blur(10px); 
+            text-align: center; 
+            padding: 20px; 
+            margin: 30px auto; 
+            border: 2px dashed var(--border-color); 
+            border-radius: 12px; 
+            color: var(--text-muted); 
+            font-size: 14px; 
+            max-width: 800px; 
+        }
         
-        /* --- زر الواتساب العائم --- */
+        /* =========================================
+           8. زر الواتساب العائم مع الأيقونة الرسمية واللون الأصلي
+           ========================================= */
         .whatsapp-float {
             position: fixed;
             bottom: 25px;
             right: 25px;
-            background-color: #25d366;
-            color: white;
-            padding: 12px 20px;
+            background-color: #25d366 !important; /* اللون الأخضر الأصلي إجباري */
+            color: #ffffff !important; /* النص أبيض إجباري */
+            padding: 12px 22px;
             border-radius: 50px;
             text-decoration: none;
-            font-weight: bold;
+            font-weight: 700;
             font-size: 15px;
-            box-shadow: 0 4px 15px rgba(37, 211, 102, 0.4);
+            box-shadow: 0 6px 20px rgba(37, 211, 102, 0.4) !important;
             display: flex;
             align-items: center;
-            gap: 8px;
+            gap: 10px;
             z-index: 1000;
-            transition: transform 0.3s ease;
+            transition: all 0.3s ease;
         }
-        .whatsapp-float:hover { transform: scale(1.05); background-color: #1ebe57; }
-        .wa-icon { font-size: 20px; }
+        .whatsapp-float:hover { 
+            transform: scale(1.05) translateY(-2px); 
+            background-color: #1ebe57 !important; 
+            box-shadow: 0 8px 25px rgba(37, 211, 102, 0.5) !important;
+        }
+        .wa-icon { 
+            width: 22px; 
+            height: 22px; 
+            fill: #ffffff; 
+        }
 
+        /* =========================================
+           9. التذييل (Footer)
+           ========================================= */
         footer { text-align: center; padding: 30px; margin-top: 40px; color: var(--text-muted); font-size: 14px; border-top: 1px solid var(--border-color); position: relative; z-index: 1; }
     </style>
 </head>
-<body>
+
+<body data-theme="dark">
 
     <header>
         <div class="logo">☑️ حاسبـ<span>ها</span></div>
         <div class="header-controls">
             <button class="control-btn" id="lang-btn">EN</button>
-            <button class="control-btn" id="theme-btn">🌙</button>
+            <button class="control-btn" id="theme-btn">☀️</button>
         </div>
     </header>
 
@@ -130,6 +232,7 @@
     </div>
 
     <div class="container">
+        <!-- أزرار الفلترة التصنيفية -->
         <div class="filters-container">
             <button class="filter-btn active" data-filter="all">الكل (10)</button>
             <button class="filter-btn" data-filter="financial">💰 مالية ومهنية (5)</button>
@@ -141,6 +244,7 @@
             مساحة مخصصة لإعلان Adsterra (بانر علوي)
         </div>
 
+        <!-- شبكة الحاسبات -->
         <div class="grid" id="calculators-grid">
             <a href="saudi-salary.html" class="card" data-category="financial">
                 <div class="card-header"><span class="card-icon">💰</span><h3>حاسبة الراتب السعودي</h3></div>
@@ -189,23 +293,27 @@
         </div>
     </div>
 
-    <!-- زر المشاركة عبر الواتساب -->
+    <!-- زر المشاركة عبر الواتساب مع الأيقونة الرسمية -->
     <a href="https://wa.me/?text=اكتشف منصة حاسبها! كل ما تحتاجه من حسابات مالية، دراسية، وعامة في مكان واحد وبدقة عالية: https://gydrefdtcy-hub.github.io/hasabha2/" target="_blank" class="whatsapp-float">
-        <span class="wa-icon">💬</span> شارك مع أصدقائك
+        <svg class="wa-icon" viewBox="0 0 24 24"><path d="M.057 24l1.687-6.163c-1.041-1.804-1.588-3.849-1.587-5.946.003-6.556 5.338-11.891 11.893-11.891 3.181.001 6.167 1.24 8.413 3.488 2.245 2.248 3.481 5.236 3.48 8.414-.003 6.557-5.338 11.892-11.893 11.892-1.99-.001-3.951-.5-5.688-1.448l-6.305 1.654zm6.597-3.807c1.676.995 3.276 1.591 5.392 1.592 5.448 0 9.886-4.434 9.889-9.885.002-5.462-4.415-9.89-9.881-9.892-5.452 0-9.887 4.434-9.889 9.884-.001 2.225.651 3.891 1.746 5.634l-.999 3.648 3.742-.981zm11.387-5.464c-.074-.124-.272-.198-.57-.347-.297-.149-1.758-.868-2.031-.967-.272-.099-.47-.149-.669.149-.198.297-.768.967-.941 1.165-.173.198-.347.223-.644.074-.297-.149-1.255-.462-2.39-1.475-.883-.788-1.48-1.761-1.653-2.059-.173-.297-.018-.458.13-.606.134-.133.297-.347.446-.521.151-.172.2-.296.3-.495.099-.198.05-.372-.025-.521-.075-.124-.669-1.612-.916-2.206-.242-.579-.487-.501-.669-.51l-.57-.01c-.198 0-.52.074-.792.372s-1.04 1.016-1.04 2.479 1.065 2.876 1.213 3.074c.149.198 2.095 3.2 5.076 4.487.709.306 1.263.489 1.694.626.712.226 1.36.194 1.872.118.571-.085 1.758-.719 2.006-1.413.248-.695.248-1.29.173-1.414z"/></svg>
+        شارك مع أصدقائك
     </a>
 
     <footer>
         <p>جميع الحقوق محفوظة &copy; 2026 - منصة حاسبها</p>
     </footer>
 
+    <!-- سكربتات التفاعل -->
     <script>
-        // الوضع الداكن
+        // 1. برمجة الوضع الداكن والفاتح
         const themeBtn = document.getElementById('theme-btn');
         const currentTheme = localStorage.getItem('theme');
-        if (currentTheme === 'dark') {
-            document.body.setAttribute('data-theme', 'dark');
-            themeBtn.innerText = '☀️';
+        
+        if (currentTheme === 'light') {
+            document.body.removeAttribute('data-theme');
+            themeBtn.innerText = '🌙';
         }
+
         themeBtn.addEventListener('click', () => {
             if (document.body.getAttribute('data-theme') === 'dark') {
                 document.body.removeAttribute('data-theme');
@@ -218,14 +326,17 @@
             }
         });
 
-        // الفلترة
+        // 2. برمجة الفلاتر (التصنيفات)
         const filterBtns = document.querySelectorAll('.filter-btn');
         const cards = document.querySelectorAll('.card');
+        
         filterBtns.forEach(btn => {
             btn.addEventListener('click', () => {
                 filterBtns.forEach(b => b.classList.remove('active'));
                 btn.classList.add('active');
+                
                 const filterValue = btn.getAttribute('data-filter');
+                
                 cards.forEach(card => {
                     if (filterValue === 'all' || card.getAttribute('data-category') === filterValue) {
                         card.style.display = 'block';
@@ -236,9 +347,9 @@
             });
         });
 
-        // اللغة
+        // 3. برمجة زر اللغة
         document.getElementById('lang-btn').addEventListener('click', () => {
-            alert("ميزة التبديل للإنجليزية قيد التطوير!");
+            alert("ميزة التبديل للغة الإنجليزية قيد التطوير حالياً، ستتوفر قريباً!");
         });
     </script>
 </body>
