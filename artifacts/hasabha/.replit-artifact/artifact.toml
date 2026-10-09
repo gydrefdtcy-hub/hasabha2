@@ -1,0 +1,28 @@
+kind = "web"
+previewPath = "/"
+title = "حاسبها"
+description = "موقع عربي متجاوب يقدم حاسبات عملية واضحة، بدءًا من النسبة المئوية والعمر والخصم، مع دعم RTL وتجربة استخدام مباشرة."
+version = "1.0.0"
+id = "artifacts/hasabha"
+router = "path"
+
+[[services]]
+name = "web"
+paths = [ "/" ]
+localPort = 20446
+
+[services.development]
+run = "pnpm --filter @workspace/hasabha run dev"
+
+[services.production]
+build = [ "pnpm", "--filter", "@workspace/hasabha", "run", "build" ]
+serve = "static"
+publicDir = "artifacts/hasabha/dist/public"
+
+[[services.production.rewrites]]
+from = "/*"
+to = "/index.html"
+
+[services.env]
+PORT = "20446"
+BASE_PATH = "/"

@@ -1,44 +1,48 @@
-# [Project name]
+# حاسبها
 
-_Replace the heading above with the project's name, and this line with one sentence describing what this app does for users._
+موقع عربي متجاوب لحاسبات يومية، يبدأ بحاسبات النسبة المئوية والعمر والخصم.
 
 ## Run & Operate
 
-- `pnpm --filter @workspace/api-server run dev` — run the API server (port 5000)
-- `pnpm run typecheck` — full typecheck across all packages
-- `pnpm run build` — typecheck + build all packages
-- `pnpm --filter @workspace/api-spec run codegen` — regenerate API hooks and Zod schemas from the OpenAPI spec
-- `pnpm --filter @workspace/db run push` — push DB schema changes (dev only)
-- Required env: `DATABASE_URL` — Postgres connection string
+- The managed workflow `artifacts/hasabha: web` runs the website and supplies the preview.
+- `pnpm --filter @workspace/hasabha run typecheck` — check the app's TypeScript.
+- `pnpm --filter @workspace/hasabha run test` — run calculation and numeric-input tests.
+- `pnpm --filter @workspace/hasabha run build` — build the site; Vite requires `PORT` and `BASE_PATH`.
+- Set `VITE_PUBLIC_SITE_URL` to the site's production origin at build time to generate the sitemap, robots sitemap entry, canonical links, and page social URLs. The sitemap script also accepts `PUBLIC_SITE_URL`; use the VITE-prefixed variable for all metadata. Do not use a development preview URL.
 
 ## Stack
 
-- pnpm workspaces, Node.js 24, TypeScript 5.9
-- API: Express 5
-- DB: PostgreSQL + Drizzle ORM
-- Validation: Zod (`zod/v4`), `drizzle-zod`
-- API codegen: Orval (from OpenAPI spec)
-- Build: esbuild (CJS bundle)
+- pnpm workspace, React, TypeScript, Vite, Tailwind CSS, Wouter, Vitest.
+- Arabic-first interface with RTL layout; calculation modules are independent of the page UI.
 
 ## Where things live
 
-_Populate as you build — short repo map plus pointers to the source-of-truth file for DB schema, API contracts, theme files, etc._
+- `artifacts/hasabha/src/App.tsx` — shared site shell, route definitions, page metadata, and calculator forms.
+- `artifacts/hasabha/src/lib/calculations.ts` — pure percentage, age, and discount functions.
+- `artifacts/hasabha/src/lib/input.ts` — localized Arabic/Persian digit parsing and numeric validation.
+- `artifacts/hasabha/src/lib/*.test.ts` — unit tests for calculations and input validation.
+- `artifacts/hasabha/scripts/generate-seo.mjs` — sitemap and robots generation using the configured public origin.
 
 ## Architecture decisions
 
-_Populate as you build — non-obvious choices a reader couldn't infer from the code (3-5 bullets)._
+- Calculations run in the browser; this phase has no database, accounts, persistent user input, analytics, or enabled advertising.
+- The available web artifact template is React + Vite, so Next.js App Router is not used in this project.
+- The sitemap is generated only when a real public origin is configured; no production domain is guessed.
 
 ## Product
 
-_Describe the high-level user-facing capabilities of this app once they exist._
+- Home page lists the three implemented calculators: percentage, age, and discount.
+- Separate routes provide each calculator, privacy information, and contact-page copy.
 
 ## User preferences
 
-_Populate as you build — explicit user instructions worth remembering across sessions._
+- Keep the site Arabic-first and RTL, with responsive mobile support.
+- Do not start the other seven planned calculators until the user reviews this phase and approves continuing.
 
 ## Gotchas
 
-_Populate as you build — sharp edges, "always run X before Y" rules._
+- Vite test runs use `vitest.config.ts`; using the Vite app config directly requires workflow variables `PORT` and `BASE_PATH`.
+- A production sitemap is omitted until `PUBLIC_SITE_URL` or `VITE_PUBLIC_SITE_URL` is provided.
 
 ## Pointers
 
