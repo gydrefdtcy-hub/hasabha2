@@ -1,0 +1,97 @@
+<!DOCTYPE html>
+<html lang="ar" dir="rtl">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>حاسبة القسط الشهري للقرض - حاسبها</title>
+    <style>
+        body { font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif; background-color: #f4f7f6; margin: 0; padding: 20px; }
+        .container { max-width: 500px; margin: auto; background: white; padding: 25px; border-radius: 12px; box-shadow: 0 4px 10px rgba(0,0,0,0.1); }
+        h1 { text-align: center; color: #2c3e50; font-size: 24px; margin-bottom: 5px; }
+        .subtitle { text-align: center; color: #7f8c8d; font-size: 14px; margin-top: 0; margin-bottom: 25px; }
+        label { display: block; margin-top: 15px; margin-bottom: 8px; font-weight: bold; color: #34495e; }
+        input { width: 100%; padding: 12px; border: 1px solid #ced4da; border-radius: 6px; box-sizing: border-box; font-size: 16px; margin-bottom: 10px; }
+        input:focus { border-color: #3498db; outline: none; }
+        button { width: 100%; padding: 14px; margin-top: 15px; background-color: #8e44ad; color: white; border: none; border-radius: 6px; font-size: 18px; font-weight: bold; cursor: pointer; }
+        button:hover { background-color: #732d91; }
+        .result { margin-top: 25px; padding: 15px; background-color: #f4ecf7; border-radius: 8px; border: 1px solid #d7bde2; display: none; }
+        .result p { margin: 10px 0; font-size: 16px; color: #2c3e50; }
+        .error { color: #e74c3c; font-size: 14px; margin-top: 5px; display: none; font-weight: bold; }
+        .disclaimer { font-size: 12px; color: #95a5a6; margin-top: 25px; text-align: justify; line-height: 1.5; }
+        .ad-space { background: #ecf0f1; text-align: center; padding: 15px; margin-top: 25px; border: 2px dashed #bdc3c7; border-radius: 8px; color: #7f8c8d; font-size: 14px; }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <h1>حاسبة القسط الشهري</h1>
+        <p class="subtitle">احسب قيمة القسط الشهري وإجمالي الفوائد بدقة</p>
+
+        <label for="amount">مبلغ القرض (ريال):</label>
+        <input type="number" id="amount" inputmode="numeric" placeholder="مثال: 100000" required>
+        <div id="error-msg" class="error">الرجاء إدخال بيانات صحيحة للمبلغ ومدة القرض.</div>
+
+        <label for="rate">نسبة الفائدة السنوية (%):</label>
+        <input type="number" id="rate" inputmode="decimal" placeholder="مثال: 5" required>
+
+        <label for="months">مدّة القرض (بالأشهر):</label>
+        <input type="number" id="months" inputmode="numeric" placeholder="مثال: 60" required>
+
+        <button onclick="calculateLoan()">احسب القسط</button>
+
+        <div id="result-box" class="result">
+            <p>القسط الشهري: <strong id="monthly-payment" style="color: #8e44ad; font-size: 20px;">0</strong> ريال</p>
+            <p>إجمالي المبالغ المستردة: <strong id="total-payment">0</strong> ريال</p>
+            <p style="color: #c0392b;">إجمالي الفوائد والأرباح: <strong id="total-interest">0</strong> ريال</p>
+        </div>
+
+        <div class="ad-space">
+            مساحة مخصصة لإعلان Adsterra
+        </div>
+
+        <div class="disclaimer">
+            * ملاحظة: تعتمد هذه الحاسبة على معادلة الفائدة الثابتة أو المتناقصة التقريبية لتوضيح الأقساط الشهرية، وقد تختلف قليلاً حسب سياسات البنوك أو الجهات التمويلية الفعلية.
+        </div>
+    </div>
+
+    <script>
+        function calculateLoan() {
+            const principal = parseFloat(document.getElementById('amount').value) || 0;
+            const annualRate = parseFloat(document.getElementById('rate').value) || 0;
+            const months = parseInt(document.getElementById('months').value) || 0;
+
+            const errorBox = document.getElementById('error-msg');
+            const resultBox = document.getElementById('result-box');
+
+            if (principal <= 0 || months <= 0) {
+                errorBox.style.display = 'block';
+                resultBox.style.display = 'none';
+                return;
+            }
+            errorBox.style.display = 'none';
+
+            let monthlyPayment = 0;
+            let totalPayment = 0;
+            let totalInterest = 0;
+
+            if (annualRate === 0) {
+                monthlyPayment = principal / months;
+                totalPayment = principal;
+                totalInterest = 0;
+            } else {
+                const monthlyRate = (annualRate / 100) / 12;
+                monthlyPayment = (principal * monthlyRate * Math.pow(1 + monthlyRate, months)) / (Math.pow(1 + monthlyRate, months) - 1);
+                totalPayment = monthlyPayment * months;
+                totalInterest = totalPayment - principal;
+            }
+
+            const fmt = (num) => num.toLocaleString('en-US', {minimumFractionDigits: 2, maximumFractionDigits: 2});
+
+            document.getElementById('monthly-payment').innerText = fmt(monthlyPayment);
+            document.getElementById('total-payment').innerText = fmt(totalPayment);
+            document.getElementById('total-interest').innerText = fmt(totalInterest);
+            
+            resultBox.style.display = 'block';
+        }
+    </script>
+</body>
+</html>
