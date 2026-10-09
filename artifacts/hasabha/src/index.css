@@ -412,14 +412,17 @@ body { margin: 0; }
 .ad-placeholder { min-height: 68px; margin-top: 0; margin-bottom: 24px; display: grid; place-items: center; border: 1px dashed hsl(var(--border)); border-radius: 12px; color: hsl(var(--muted-foreground)); font-size: .78rem; }
 @keyframes result-in { from { opacity: 0; transform: translateY(6px); } to { opacity: 1; transform: translateY(0); } }
 @media (max-width: 760px) {
-  .topbar-inner { min-height: 67px; padding-inline: 19px; }
+  .topbar-inner { min-height: 62px; padding-inline: 19px; }
   .desktop-nav { display: none; }
   .mobile-toggle { display: grid; }
   .mobile-menu { display: flex; flex-direction: column; gap: 4px; padding: 8px 18px 16px; border-top: 1px solid hsl(var(--border) / .7); background: hsl(var(--background)); }
   .mobile-menu .nav-link { padding: 11px 12px; }
   .container { padding-inline: 19px; }
-  .home-hero { padding: 51px 0 33px; }
-  .hero-copy { font-size: 1rem; }
+  .home-hero { padding: 30px 0 19px; }
+  .hero-title { margin-top: 12px; margin-bottom: 9px; }
+  .hero-copy { font-size: 1rem; line-height: 1.65; }
+  .tool-section { padding-top: 10px; padding-bottom: 54px; }
+  .section-head { margin-bottom: 12px; }
   .tool-grid { gap: 11px; }
   .tool-card { min-height: 166px; padding: 20px; }
   .tool-icon { margin-bottom: 14px; }
