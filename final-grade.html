@@ -1,0 +1,121 @@
+<!DOCTYPE html>
+<html lang="ar" dir="rtl">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>حاسبة الاختبار النهائي - حاسبها</title>
+    <style>
+        :root {
+            --primary: #16a085;
+            --primary-hover: #117a65;
+            --bg: #f4f7f6;
+            --text-dark: #2c3e50;
+            --border: #ced4da;
+        }
+        body { font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif; background-color: var(--bg); margin: 0; padding: 20px; }
+        .container { max-width: 500px; margin: auto; background: white; padding: 25px; border-radius: 12px; box-shadow: 0 4px 15px rgba(0,0,0,0.05); }
+        h1 { text-align: center; color: var(--text-dark); font-size: 24px; margin-bottom: 5px; }
+        .subtitle { text-align: center; color: #7f8c8d; font-size: 14px; margin-top: 0; margin-bottom: 25px; }
+        
+        label { display: block; margin-top: 15px; margin-bottom: 8px; font-weight: bold; color: #34495e; }
+        input { width: 100%; padding: 12px; border: 1px solid var(--border); border-radius: 6px; box-sizing: border-box; font-size: 16px; transition: all 0.3s ease; }
+        input:focus { border-color: var(--primary); outline: none; box-shadow: 0 0 0 3px rgba(22, 160, 133, 0.15); }
+        
+        button { width: 100%; padding: 14px; margin-top: 25px; background-color: var(--primary); color: white; border: none; border-radius: 6px; font-size: 18px; font-weight: bold; cursor: pointer; transition: 0.3s; }
+        button:hover { background-color: var(--primary-hover); }
+        
+        .result { margin-top: 25px; padding: 20px; background-color: #e8f6f3; border-radius: 8px; border: 1px solid #a2d9ce; display: none; text-align: center; animation: fadeIn 0.4s ease-out; }
+        @keyframes fadeIn { from { opacity: 0; transform: translateY(-5px); } to { opacity: 1; transform: translateY(0); } }
+        
+        .result p { margin: 10px 0; font-size: 16px; color: var(--text-dark); }
+        .highlight { color: var(--primary); font-size: 28px; font-weight: bold; display: block; margin-top: 10px; }
+        .impossible { color: #e74c3c; font-size: 18px; font-weight: bold; }
+        
+        .error { color: #e74c3c; font-size: 14px; margin-top: 8px; display: none; font-weight: bold; }
+        .ad-space { background: #ecf0f1; text-align: center; padding: 15px; margin-top: 25px; border: 2px dashed #bdc3c7; border-radius: 8px; color: #7f8c8d; font-size: 14px; }
+        .disclaimer { font-size: 12px; color: #95a5a6; margin-top: 25px; text-align: justify; line-height: 1.6; }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <h1>حاسبة الاختبار النهائي</h1>
+        <p class="subtitle">اعرف الدرجة المطلوبة في الفاينل لتحقيق هدفك</p>
+
+        <label for="target">النسبة الكلية المستهدفة للمادة (%):</label>
+        <input type="number" id="target" inputmode="numeric" placeholder="مثال: 90 (لتحقيق ممتاز)" min="1" max="100" required>
+
+        <label for="current">نسبتك الحالية في الأعمال الفصلية (%):</label>
+        <input type="number" id="current" inputmode="numeric" placeholder="مثال: 85" min="0" max="100" required>
+
+        <label for="weight">وزن الاختبار النهائي من إجمالي المادة (%):</label>
+        <input type="number" id="weight" inputmode="numeric" placeholder="مثال: 40" min="1" max="99" required>
+        
+        <div id="error-msg" class="error">الرجاء إدخال نسب مئوية صحيحة بين 0 و 100.</div>
+
+        <button onclick="calculateFinalGrade()">احسب الدرجة المطلوبة</button>
+
+        <div id="result-box" class="result">
+            <p>لتحصل على <strong id="target-display">0</strong>% في المادة، تحتاج في النهائي إلى:</p>
+            <span id="required-grade" class="highlight">0%</span>
+            <p id="extra-msg" style="display:none; font-size: 14px; margin-top:15px;"></p>
+        </div>
+
+        <div class="ad-space">
+            مساحة مخصصة لإعلان Adsterra
+        </div>
+
+        <div class="disclaimer">
+            * طريقة الحساب: يتم خصم نقاط الأعمال الفصلية المكتسبة من النسبة المستهدفة، ثم قسمة الناتج على وزن الاختبار النهائي. مثال: إذا هدفك 90%، وحصلت على 85% في أعمال فصلية وزنها 60%، والنهائي وزنه 40%.. فالمطلوب منك في النهائي هو 97.5%.
+        </div>
+    </div>
+
+    <script>
+        function calculateFinalGrade() {
+            const target = parseFloat(document.getElementById('target').value);
+            const current = parseFloat(document.getElementById('current').value);
+            const finalWeight = parseFloat(document.getElementById('weight').value);
+
+            const errorBox = document.getElementById('error-msg');
+            const resultBox = document.getElementById('result-box');
+            const requiredGradeEl = document.getElementById('required-grade');
+            const extraMsgEl = document.getElementById('extra-msg');
+
+            // التحقق من المدخلات
+            if (isNaN(target) || isNaN(current) || isNaN(finalWeight) || 
+                target <= 0 || target > 100 || current < 0 || current > 100 || 
+                finalWeight <= 0 || finalWeight >= 100) {
+                errorBox.style.display = 'block';
+                resultBox.style.display = 'none';
+                return;
+            }
+            errorBox.style.display = 'none';
+
+            // المعادلة الرياضية
+            const courseworkWeight = 100 - finalWeight;
+            const currentPointsGained = current * (courseworkWeight / 100);
+            const requiredPointsInFinal = target - currentPointsGained;
+            const requiredPercentageInFinal = requiredPointsInFinal / (finalWeight / 100);
+
+            document.getElementById('target-display').innerText = target;
+            extraMsgEl.style.display = 'none';
+            requiredGradeEl.className = 'highlight';
+
+            if (requiredPercentageInFinal > 100) {
+                requiredGradeEl.innerText = "مستحيل رياضياً";
+                requiredGradeEl.className = 'impossible';
+                extraMsgEl.innerText = `تحتاج إلى ${requiredPercentageInFinal.toFixed(1)}% وهو يتجاوز الدرجة الكاملة للاختبار.`;
+                extraMsgEl.style.display = 'block';
+            } else if (requiredPercentageInFinal <= 0) {
+                requiredGradeEl.innerText = "0%";
+                extraMsgEl.innerText = "مبروك! لقد حققت النسبة المستهدفة من خلال الأعمال الفصلية فقط ولا تحتاج لدرجات إضافية في النهائي.";
+                extraMsgEl.style.display = 'block';
+                extraMsgEl.style.color = '#16a085';
+            } else {
+                requiredGradeEl.innerText = requiredPercentageInFinal.toFixed(1) + "%";
+            }
+
+            resultBox.style.display = 'block';
+        }
+    </script>
+</body>
+</html>
