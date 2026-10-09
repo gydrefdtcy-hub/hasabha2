@@ -5,149 +5,241 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>منصة حاسبها - كل حساباتك في مكان واحد</title>
     <style>
+        /* المتغيرات الأساسية */
         :root {
-            --primary: #16a085;
-            --bg-color: #f8f9fc;
-            --text-main: #2c3e50;
-            --text-muted: #7f8c8d;
-            --card-bg: #ffffff;
+            --primary: #00b894; 
+            --bg-color: #f8f9fa;
+            --card-bg: rgba(255, 255, 255, 0.85); /* شفافية لظهور الخلفية */
+            --text-main: #2d3436;
+            --text-muted: #636e72;
+            --border-color: rgba(223, 230, 233, 0.5);
+            --header-bg: rgba(255, 255, 255, 0.9);
+            --filter-bg: rgba(241, 242, 246, 0.8);
+            --filter-text: #2d3436;
+        }
+
+        /* المتغيرات للوضع الداكن الفاخر */
+        [data-theme="dark"] {
+            --primary: #f1c40f; /* لون ذهبي يتناسب مع الشعار */
+            --bg-color: #0f172a; 
+            --card-bg: rgba(30, 41, 59, 0.75); /* شفافية زجاجية داكنة */
+            --text-main: #f8fafc;
+            --text-muted: #94a3b8;
+            --border-color: rgba(51, 65, 85, 0.5);
+            --header-bg: rgba(15, 23, 42, 0.9);
+            --filter-bg: rgba(30, 41, 59, 0.8);
+            --filter-text: #cbd5e1;
         }
         
-        body { font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif; background-color: var(--bg-color); margin: 0; padding: 0; color: var(--text-main); }
+        body { 
+            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif; 
+            background-color: var(--bg-color); 
+            margin: 0; padding: 0; color: var(--text-main); 
+            transition: background-color 0.3s, color 0.3s; 
+            position: relative;
+            min-height: 100vh;
+        }
+
+        /* --- خلفية الشعار الفاخرة --- */
+        body::before {
+            content: '';
+            position: fixed;
+            top: 0; left: 0; width: 100%; height: 100%;
+            background-image: url('logo.png');
+            background-size: cover;
+            background-position: center;
+            opacity: 0.08; /* شفافية باهتة جداً لتعطي فخامة دون إزعاج القراءة */
+            z-index: -1;
+            pointer-events: none;
+        }
+        [data-theme="dark"] body::before {
+            opacity: 0.15; /* إبراز الشعار أكثر في الوضع الداكن */
+        }
         
-        /* تصميم الهيدر (الترويسة) */
-        header { background-color: white; padding: 20px 0; text-align: center; box-shadow: 0 2px 10px rgba(0,0,0,0.05); position: sticky; top: 0; z-index: 100; }
-        .logo { font-size: 28px; font-weight: 900; color: var(--primary); margin: 0; }
+        /* الترويسة */
+        header { background-color: var(--header-bg); backdrop-filter: blur(10px); padding: 15px 20px; display: flex; justify-content: space-between; align-items: center; border-bottom: 1px solid var(--border-color); position: sticky; top: 0; z-index: 100; }
+        .logo { font-size: 24px; font-weight: 900; color: var(--primary); margin: 0; display: flex; align-items: center; gap: 8px; text-shadow: 0 2px 4px rgba(0,0,0,0.1); }
         .logo span { color: var(--text-main); }
         
-        /* ترحيب الموقع */
-        .hero { text-align: center; padding: 40px 20px 20px; }
-        .hero h1 { font-size: 32px; margin-bottom: 10px; color: var(--text-main); }
+        .header-controls { display: flex; gap: 10px; }
+        .control-btn { background: var(--card-bg); border: 1px solid var(--border-color); color: var(--text-main); padding: 8px 12px; border-radius: 8px; cursor: pointer; font-weight: bold; font-size: 14px; transition: 0.3s; backdrop-filter: blur(5px); }
+        .control-btn:hover { border-color: var(--primary); color: var(--primary); }
+
+        .hero { text-align: center; padding: 40px 20px 20px; position: relative; z-index: 1; }
+        .hero h1 { font-size: 32px; margin-bottom: 10px; font-weight: 800; }
         .hero p { font-size: 16px; color: var(--text-muted); max-width: 600px; margin: 0 auto; line-height: 1.6; }
+
+        .container { max-width: 1000px; margin: 0 auto; padding: 20px; position: relative; z-index: 1; }
+
+        .filters-container { display: flex; flex-wrap: wrap; gap: 10px; justify-content: center; margin-bottom: 30px; margin-top: 20px; }
+        .filter-btn { background-color: var(--filter-bg); color: var(--filter-text); border: 1px solid var(--border-color); padding: 10px 20px; border-radius: 50px; font-size: 15px; font-weight: 600; cursor: pointer; transition: all 0.3s ease; backdrop-filter: blur(5px); }
+        .filter-btn.active { background-color: var(--primary); color: #fff; border-color: var(--primary); }
         
-        /* مساحة إعلانية رئيسية */
-        .ad-banner { max-width: 800px; margin: 20px auto; background: #ecf0f1; border: 2px dashed #bdc3c7; border-radius: 12px; padding: 20px; text-align: center; color: var(--text-muted); font-size: 14px; }
+        /* تأثير الزجاج على البطاقات */
+        .grid { display: grid; grid-template-columns: repeat(auto-fill, minmax(300px, 1fr)); gap: 20px; }
+        .card { background-color: var(--card-bg); backdrop-filter: blur(12px); border-radius: 16px; padding: 25px; text-decoration: none; border: 1px solid var(--border-color); transition: all 0.3s ease; display: block; color: inherit; position: relative; overflow: hidden; box-shadow: 0 4px 15px rgba(0,0,0,0.05); }
+        .card:hover { transform: translateY(-5px); border-color: var(--primary); box-shadow: 0 10px 30px rgba(0,0,0,0.15); }
+        .card::before { content: ''; position: absolute; top: 0; right: 0; width: 4px; height: 100%; background-color: var(--primary); opacity: 0; transition: 0.3s; }
+        .card:hover::before { opacity: 1; }
         
-        /* حاوية الأقسام */
-        .container { max-width: 1000px; margin: 0 auto; padding: 20px; }
-        .section-title { font-size: 22px; color: var(--text-main); border-bottom: 3px solid var(--primary); display: inline-block; padding-bottom: 5px; margin-top: 30px; margin-bottom: 20px; font-weight: 700; }
+        .card-header { display: flex; align-items: center; gap: 15px; margin-bottom: 12px; }
+        .card-icon { font-size: 28px; }
+        .card h3 { margin: 0; font-size: 18px; color: var(--text-main); font-weight: 700; }
+        .card p { margin: 0; font-size: 14px; color: var(--text-muted); line-height: 1.6; }
         
-        /* شبكة الكروت (Cards) */
-        .grid { display: grid; grid-template-columns: repeat(auto-fill, minmax(280px, 1fr)); gap: 20px; }
+        .ad-space { background: var(--card-bg); backdrop-filter: blur(10px); text-align: center; padding: 20px; margin: 30px auto; border: 2px dashed var(--border-color); border-radius: 12px; color: var(--text-muted); font-size: 14px; max-width: 800px; }
         
-        .card { background-color: var(--card-bg); border-radius: 12px; padding: 20px; text-decoration: none; box-shadow: 0 4px 15px rgba(0,0,0,0.04); border: 1px solid #eee; transition: transform 0.3s ease, box-shadow 0.3s ease; display: block; color: inherit; }
-        .card:hover { transform: translateY(-5px); box-shadow: 0 10px 25px rgba(0,0,0,0.1); border-color: var(--primary); }
-        
-        .card-icon { width: 50px; height: 50px; background-color: #e8f6f3; color: var(--primary); border-radius: 12px; display: flex; align-items: center; justify-content: center; font-size: 24px; margin-bottom: 15px; font-weight: bold; }
-        .card h3 { margin: 0 0 8px 0; font-size: 18px; color: var(--text-main); }
-        .card p { margin: 0; font-size: 14px; color: var(--text-muted); line-height: 1.5; }
-        
-        /* الفوتر (تذييل الصفحة) */
-        footer { text-align: center; padding: 30px; margin-top: 40px; color: var(--text-muted); font-size: 14px; background: white; border-top: 1px solid #eee; }
-        
-        @media (max-width: 600px) {
-            .hero h1 { font-size: 26px; }
-            .grid { grid-template-columns: 1fr; }
+        /* --- زر الواتساب العائم --- */
+        .whatsapp-float {
+            position: fixed;
+            bottom: 25px;
+            right: 25px;
+            background-color: #25d366;
+            color: white;
+            padding: 12px 20px;
+            border-radius: 50px;
+            text-decoration: none;
+            font-weight: bold;
+            font-size: 15px;
+            box-shadow: 0 4px 15px rgba(37, 211, 102, 0.4);
+            display: flex;
+            align-items: center;
+            gap: 8px;
+            z-index: 1000;
+            transition: transform 0.3s ease;
         }
+        .whatsapp-float:hover { transform: scale(1.05); background-color: #1ebe57; }
+        .wa-icon { font-size: 20px; }
+
+        footer { text-align: center; padding: 30px; margin-top: 40px; color: var(--text-muted); font-size: 14px; border-top: 1px solid var(--border-color); position: relative; z-index: 1; }
     </style>
 </head>
 <body>
 
     <header>
-        <h1 class="logo">حاسبـ<span>ها</span></h1>
+        <div class="logo">☑️ حاسبـ<span>ها</span></div>
+        <div class="header-controls">
+            <button class="control-btn" id="lang-btn">EN</button>
+            <button class="control-btn" id="theme-btn">🌙</button>
+        </div>
     </header>
 
     <div class="hero">
-        <h1>كل ما تحتاجه من حسابات، في مكان واحد.</h1>
-        <p>أدوات صغيرة لقرارات يومية أوضح. اختر الحاسبة المناسبة، أدخل أرقامك، واحصل على النتيجة فوراً.</p>
+        <h1>اختر حاسبتك</h1>
+        <p>مجموعة متكاملة من الحاسبات الدقيقة، مصممة خصيصاً لتسهيل قراراتك اليومية بسرعة ومجاناً بالكامل.</p>
     </div>
 
     <div class="container">
-        <!-- مساحة إعلانية رئيسية -->
-        <div class="ad-banner">
-            مساحة مخصصة لإعلان Adsterra (بانر رئيسي)
+        <div class="filters-container">
+            <button class="filter-btn active" data-filter="all">الكل (10)</button>
+            <button class="filter-btn" data-filter="financial">💰 مالية ومهنية (5)</button>
+            <button class="filter-btn" data-filter="edu">🎓 دراسية (2)</button>
+            <button class="filter-btn" data-filter="general">📦 عامة وزمنية (3)</button>
         </div>
 
-        <!-- القسم الأول: مالية ومهنية -->
-        <h2 class="section-title">حاسبات مالية ومهنية</h2>
-        <div class="grid">
-            <a href="saudi-salary.html" class="card">
-                <div class="card-icon">💰</div>
-                <h3>حاسبة الراتب السعودي</h3>
+        <div class="ad-space">
+            مساحة مخصصة لإعلان Adsterra (بانر علوي)
+        </div>
+
+        <div class="grid" id="calculators-grid">
+            <a href="saudi-salary.html" class="card" data-category="financial">
+                <div class="card-header"><span class="card-icon">💰</span><h3>حاسبة الراتب السعودي</h3></div>
                 <p>احسب صافي راتبك بعد خصم التأمينات الاجتماعية (9.75%) بدقة.</p>
             </a>
-            <a href="salary-increase.html" class="card">
-                <div class="card-icon">📈</div>
-                <h3>حاسبة زيادة الراتب</h3>
+            <a href="salary-increase.html" class="card" data-category="financial">
+                <div class="card-header"><span class="card-icon">📈</span><h3>حاسبة زيادة الراتب</h3></div>
                 <p>أداة تفاعلية لمعرفة راتبك الجديد بعد العلاوة أو الترقية.</p>
             </a>
-            <a href="end-of-service.html" class="card">
-                <div class="card-icon">🤝</div>
-                <h3>مكافأة نهاية الخدمة</h3>
+            <a href="end-of-service.html" class="card" data-category="financial">
+                <div class="card-header"><span class="card-icon">🤝</span><h3>مكافأة نهاية الخدمة</h3></div>
                 <p>احسب مستحقاتك العمالية حسب نظام العمل السعودي بسهولة.</p>
             </a>
-            <a href="loan-calculator.html" class="card">
-                <div class="card-icon">🏦</div>
-                <h3>حاسبة القروض</h3>
+            <a href="loan-calculator.html" class="card" data-category="financial">
+                <div class="card-header"><span class="card-icon">🏦</span><h3>حاسبة القروض</h3></div>
                 <p>اعرف قيمة القسط الشهري وإجمالي الفوائد لقرضك الشخصي.</p>
             </a>
-            <a href="profit-margin.html" class="card">
-                <div class="card-icon">🛒</div>
-                <h3>هامش الربح وسعر البيع</h3>
+            <a href="profit-margin.html" class="card" data-category="financial">
+                <div class="card-header"><span class="card-icon">🛒</span><h3>هامش الربح وسعر البيع</h3></div>
                 <p>حدد سعر البيع المثالي لمنتجاتك بناءً على هامش الربح المطلوب.</p>
             </a>
-        </div>
-
-        <!-- القسم الثاني: أدوات دراسية -->
-        <h2 class="section-title">حاسبات دراسية</h2>
-        <div class="grid">
-            <a href="gpa-calculator.html" class="card">
-                <div class="card-icon">🎓</div>
-                <h3>المعدل الجامعي (GPA)</h3>
+            <a href="gpa-calculator.html" class="card" data-category="edu">
+                <div class="card-header"><span class="card-icon">🎓</span><h3>المعدل الجامعي (GPA)</h3></div>
                 <p>احسب معدلك الفصلي والتراكمي من 5.0 بخطوات سريعة وبسيطة.</p>
             </a>
-            <a href="final-grade.html" class="card">
-                <div class="card-icon">📝</div>
-                <h3>درجة الاختبار النهائي</h3>
+            <a href="final-grade.html" class="card" data-category="edu">
+                <div class="card-header"><span class="card-icon">📝</span><h3>درجة الاختبار النهائي</h3></div>
                 <p>اعرف كم تحتاج في الفاينل لتحقيق الدرجة (الجريد) الذي تطمح إليه.</p>
             </a>
-        </div>
-
-        <!-- القسم الثالث: حاسبات عامة وزمنية -->
-        <h2 class="section-title">حاسبات عامة وزمنية</h2>
-        <div class="grid">
-            <a href="date-difference.html" class="card">
-                <div class="card-icon">📅</div>
-                <h3>الفرق بين تاريخين</h3>
+            <a href="date-difference.html" class="card" data-category="general">
+                <div class="card-header"><span class="card-icon">📅</span><h3>الفرق بين تاريخين</h3></div>
                 <p>احسب المدة الزمنية بدقة بالسنوات، الأشهر، والأيام.</p>
             </a>
-            <!-- الروابط الخاصة بحاسبات ريبليت الثلاث القديمة -->
-            <a href="age.html" class="card">
-                <div class="card-icon">⏳</div>
-                <h3>حاسبة العمر</h3>
+            <a href="age.html" class="card" data-category="general">
+                <div class="card-header"><span class="card-icon">⏳</span><h3>حاسبة العمر</h3></div>
                 <p>احسب عمرك بدقة وانطلق من تاريخ ميلادك لمعرفة تفاصيل عمرك.</p>
             </a>
-            <a href="percentage.html" class="card">
-                <div class="card-icon">%</div>
-                <h3>حاسبة النسبة المئوية</h3>
-                <p>اعرف قيمة النسبة، أو النسبة التي تمثلها قيمة معينة.</p>
-            </a>
-            <a href="discount.html" class="card">
-                <div class="card-icon">🏷️</div>
-                <h3>حاسبة الخصم</h3>
+            <a href="discount.html" class="card" data-category="general">
+                <div class="card-header"><span class="card-icon">🏷️</span><h3>حاسبة الخصم</h3></div>
                 <p>احسب قيمة التوفير والسعر النهائي بعد تطبيق التخفيض.</p>
             </a>
         </div>
         
-        <!-- مساحة إعلانية سفلية -->
-        <div class="ad-banner" style="margin-top: 40px;">
+        <div class="ad-space" style="margin-top: 40px;">
             مساحة مخصصة لإعلان Adsterra (بانر سفلي)
         </div>
     </div>
+
+    <!-- زر المشاركة عبر الواتساب -->
+    <a href="https://wa.me/?text=اكتشف منصة حاسبها! كل ما تحتاجه من حسابات مالية، دراسية، وعامة في مكان واحد وبدقة عالية: https://gydrefdtcy-hub.github.io/hasabha2/" target="_blank" class="whatsapp-float">
+        <span class="wa-icon">💬</span> شارك مع أصدقائك
+    </a>
 
     <footer>
         <p>جميع الحقوق محفوظة &copy; 2026 - منصة حاسبها</p>
     </footer>
 
+    <script>
+        // الوضع الداكن
+        const themeBtn = document.getElementById('theme-btn');
+        const currentTheme = localStorage.getItem('theme');
+        if (currentTheme === 'dark') {
+            document.body.setAttribute('data-theme', 'dark');
+            themeBtn.innerText = '☀️';
+        }
+        themeBtn.addEventListener('click', () => {
+            if (document.body.getAttribute('data-theme') === 'dark') {
+                document.body.removeAttribute('data-theme');
+                localStorage.setItem('theme', 'light');
+                themeBtn.innerText = '🌙';
+            } else {
+                document.body.setAttribute('data-theme', 'dark');
+                localStorage.setItem('theme', 'dark');
+                themeBtn.innerText = '☀️';
+            }
+        });
+
+        // الفلترة
+        const filterBtns = document.querySelectorAll('.filter-btn');
+        const cards = document.querySelectorAll('.card');
+        filterBtns.forEach(btn => {
+            btn.addEventListener('click', () => {
+                filterBtns.forEach(b => b.classList.remove('active'));
+                btn.classList.add('active');
+                const filterValue = btn.getAttribute('data-filter');
+                cards.forEach(card => {
+                    if (filterValue === 'all' || card.getAttribute('data-category') === filterValue) {
+                        card.style.display = 'block';
+                    } else {
+                        card.style.display = 'none';
+                    }
+                });
+            });
+        });
+
+        // اللغة
+        document.getElementById('lang-btn').addEventListener('click', () => {
+            alert("ميزة التبديل للإنجليزية قيد التطوير!");
+        });
+    </script>
 </body>
 </html>
