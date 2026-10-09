@@ -1,0 +1,102 @@
+<!DOCTYPE html>
+<html lang="ar" dir="rtl">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>حاسبة الراتب السعودي - حاسبها</title>
+    <style>
+        body { font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif; background-color: #f4f7f6; margin: 0; padding: 20px; }
+        .container { max-width: 500px; margin: auto; background: white; padding: 25px; border-radius: 12px; box-shadow: 0 4px 10px rgba(0,0,0,0.1); }
+        h1 { text-align: center; color: #2c3e50; font-size: 24px; margin-bottom: 5px; }
+        .subtitle { text-align: center; color: #7f8c8d; font-size: 14px; margin-top: 0; margin-bottom: 25px; }
+        label { display: block; margin-top: 15px; margin-bottom: 8px; font-weight: bold; color: #34495e; }
+        input { width: 100%; padding: 12px; border: 1px solid #ced4da; border-radius: 6px; box-sizing: border-box; font-size: 16px; transition: border-color 0.3s; }
+        input:focus { border-color: #3498db; outline: none; }
+        button { width: 100%; padding: 14px; margin-top: 25px; background-color: #27ae60; color: white; border: none; border-radius: 6px; font-size: 18px; font-weight: bold; cursor: pointer; transition: background-color 0.3s; }
+        button:hover { background-color: #219150; }
+        .result { margin-top: 25px; padding: 15px; background-color: #e8f8f5; border-radius: 8px; border: 1px solid #a3e4d7; display: none; }
+        .result p { margin: 10px 0; font-size: 16px; color: #2c3e50; }
+        .result hr { border: 0; border-top: 1px solid #bdc3c7; margin: 15px 0; }
+        .error { color: #e74c3c; font-size: 14px; margin-top: 5px; display: none; font-weight: bold; }
+        .disclaimer { font-size: 12px; color: #95a5a6; margin-top: 25px; text-align: justify; line-height: 1.5; }
+        .ad-space { background: #ecf0f1; text-align: center; padding: 15px; margin-top: 25px; border: 2px dashed #bdc3c7; border-radius: 8px; color: #7f8c8d; font-size: 14px; }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <h1>حاسبة الراتب السعودي</h1>
+        <p class="subtitle">احسب صافي راتبك بعد خصم التأمينات الاجتماعية (9.75%)</p>
+
+        <label for="basic">الراتب الأساسي (ريال):</label>
+        <input type="number" id="basic" inputmode="numeric" placeholder="مثال: 5000" required>
+        <div id="basic-error" class="error">الرجاء إدخال راتب أساسي صحيح أكبر من الصفر.</div>
+
+        <label for="housing">بدل السكن (ريال):</label>
+        <input type="number" id="housing" inputmode="numeric" placeholder="مثال: 1500 (اتركه فارغاً إن لم يوجد)">
+
+        <label for="other">بدلات أخرى غير خاضعة للتأمينات (نقل، اتصال..):</label>
+        <input type="number" id="other" inputmode="numeric" placeholder="مثال: 500 (اتركه فارغاً إن لم يوجد)">
+
+        <button onclick="calculateSalary()">احسب الراتب</button>
+
+        <div id="result-box" class="result">
+            <p>إجمالي الراتب: <strong id="total-salary">0</strong> ريال</p>
+            <p>الراتب الخاضع للتأمينات: <strong id="gosi-salary">0</strong> ريال</p>
+            <p style="color: #e74c3c;">مجموع الاستقطاع (9.75%): <strong id="deduction">0</strong> ريال</p>
+            <hr>
+            <p style="font-size: 20px; color: #27ae60; font-weight: bold;">صافي الراتب: <strong id="net-salary">0</strong> ريال</p>
+        </div>
+
+        <div class="ad-space">
+            مساحة مخصصة لإعلان Adsterra (سيتم إضافة الشفرة لاحقاً)
+        </div>
+
+        <div class="disclaimer">
+            * إخلاء مسؤولية: يطبق خصم 9.75% (9% تأمينات + 0.75% ساند) للموظف السعودي على (الراتب الأساسي + بدل السكن) فقط. الحد الأقصى للأجر الخاضع للاشتراك هو 45,000 ريال. هذه الحاسبة تقدم تقديراً عاماً مبنياً على القواعد الأساسية، ولا تعتبر مستنداً قانونياً أو تشمل الخصومات الداخلية للشركات.
+        </div>
+    </div>
+
+    <script>
+        function formatNumber(num) {
+            return num.toLocaleString('en-US', {minimumFractionDigits: 2, maximumFractionDigits: 2});
+        }
+
+        function calculateSalary() {
+            const basicInput = document.getElementById('basic').value;
+            const housingInput = document.getElementById('housing').value;
+            const otherInput = document.getElementById('other').value;
+
+            const basic = parseFloat(basicInput) || 0;
+            const housing = parseFloat(housingInput) || 0;
+            const other = parseFloat(otherInput) || 0;
+            
+            const errorBox = document.getElementById('basic-error');
+            const resultBox = document.getElementById('result-box');
+
+            if (basic <= 0) {
+                errorBox.style.display = 'block';
+                resultBox.style.display = 'none';
+                return;
+            }
+            errorBox.style.display = 'none';
+
+            const totalSalary = basic + housing + other;
+            let gosiSalary = basic + housing;
+            
+            if (gosiSalary > 45000) {
+                gosiSalary = 45000;
+            }
+
+            const deduction = gosiSalary * 0.0975;
+            const netSalary = totalSalary - deduction;
+
+            document.getElementById('total-salary').innerText = formatNumber(totalSalary);
+            document.getElementById('gosi-salary').innerText = formatNumber(gosiSalary);
+            document.getElementById('deduction').innerText = formatNumber(deduction);
+            document.getElementById('net-salary').innerText = formatNumber(netSalary);
+            
+            resultBox.style.display = 'block';
+        }
+    </script>
+</body>
+</html>
