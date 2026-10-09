@@ -1,0 +1,126 @@
+<!DOCTYPE html>
+<html lang="ar" dir="rtl">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>حاسبة الفرق بين تاريخين - حاسبها</title>
+    <style>
+        :root {
+            --primary: #e67e22;
+            --primary-hover: #d35400;
+            --bg: #f4f7f6;
+            --text-dark: #2c3e50;
+            --border: #ced4da;
+        }
+        body { font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif; background-color: var(--bg); margin: 0; padding: 20px; }
+        .container { max-width: 500px; margin: auto; background: white; padding: 25px; border-radius: 12px; box-shadow: 0 4px 15px rgba(0,0,0,0.05); }
+        h1 { text-align: center; color: var(--text-dark); font-size: 24px; margin-bottom: 5px; }
+        .subtitle { text-align: center; color: #7f8c8d; font-size: 14px; margin-top: 0; margin-bottom: 25px; }
+        
+        label { display: block; margin-top: 15px; margin-bottom: 8px; font-weight: bold; color: #34495e; }
+        input[type="date"] { width: 100%; padding: 12px; border: 1px solid var(--border); border-radius: 6px; box-sizing: border-box; font-size: 16px; transition: all 0.3s ease; font-family: inherit; }
+        input[type="date"]:focus { border-color: var(--primary); outline: none; box-shadow: 0 0 0 3px rgba(230, 126, 34, 0.15); }
+        
+        button { width: 100%; padding: 14px; margin-top: 25px; background-color: var(--primary); color: white; border: none; border-radius: 6px; font-size: 18px; font-weight: bold; cursor: pointer; transition: 0.3s; }
+        button:hover { background-color: var(--primary-hover); }
+        
+        .result { margin-top: 25px; padding: 20px; background-color: #fdf2e9; border-radius: 8px; border: 1px solid #fad7a1; display: none; text-align: center; animation: fadeIn 0.4s ease-out; }
+        @keyframes fadeIn { from { opacity: 0; transform: translateY(-5px); } to { opacity: 1; transform: translateY(0); } }
+        
+        .result p { margin: 10px 0; font-size: 16px; color: var(--text-dark); }
+        .highlight { color: var(--primary); font-size: 22px; font-weight: bold; display: block; margin-top: 5px; }
+        
+        .error { color: #e74c3c; font-size: 14px; margin-top: 8px; display: none; font-weight: bold; }
+        .ad-space { background: #ecf0f1; text-align: center; padding: 15px; margin-top: 25px; border: 2px dashed #bdc3c7; border-radius: 8px; color: #7f8c8d; font-size: 14px; }
+        .disclaimer { font-size: 12px; color: #95a5a6; margin-top: 25px; text-align: center; }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <h1>حاسبة الفرق بين تاريخين</h1>
+        <p class="subtitle">احسب المدة الزمنية الدقيقة بالسنوات، الأشهر، والأيام</p>
+
+        <label for="start-date">تاريخ البداية:</label>
+        <input type="date" id="start-date" required>
+
+        <label for="end-date">تاريخ النهاية:</label>
+        <input type="date" id="end-date" required>
+        
+        <div id="error-msg" class="error">الرجاء إدخال تواريخ صحيحة.</div>
+
+        <button onclick="calculateDateDiff()">احسب الفرق</button>
+
+        <div id="result-box" class="result">
+            <p>المدة الزمنية بين التاريخين هي:</p>
+            <span id="diff-text" class="highlight">0 سنوات و 0 أشهر و 0 أيام</span>
+            <hr style="border: 0; border-top: 1px solid #fad7a1; margin: 15px 0;">
+            <p style="font-size: 14px;">إجمالي الأيام: <strong id="total-days">0</strong> يوم</p>
+        </div>
+
+        <div class="ad-space">
+            مساحة مخصصة لإعلان Adsterra
+        </div>
+
+        <div class="disclaimer">
+            * الحسبة تعتمد على التقويم الميلادي، ويتم حساب الفروقات بدقة مع مراعاة السنوات الكبيسة وأطوال الأشهر المتغيرة.
+        </div>
+    </div>
+
+    <script>
+        function calculateDateDiff() {
+            const startDateInput = document.getElementById('start-date').value;
+            const endDateInput = document.getElementById('end-date').value;
+            const errorBox = document.getElementById('error-msg');
+            const resultBox = document.getElementById('result-box');
+
+            if (!startDateInput || !endDateInput) {
+                errorBox.style.display = 'block';
+                resultBox.style.display = 'none';
+                return;
+            }
+            errorBox.style.display = 'none';
+
+            let date1 = new Date(startDateInput);
+            let date2 = new Date(endDateInput);
+
+            // ترتيب التواريخ إذا كان تاريخ النهاية قبل تاريخ البداية
+            if (date1 > date2) {
+                const temp = date1;
+                date1 = date2;
+                date2 = temp;
+            }
+
+            // حساب إجمالي الأيام
+            const diffTime = Math.abs(date2 - date1);
+            const totalDays = Math.ceil(diffTime / (1000 * 60 * 60 * 24));
+
+            // حساب السنوات والأشهر والأيام
+            let years = date2.getFullYear() - date1.getFullYear();
+            let months = date2.getMonth() - date1.getMonth();
+            let days = date2.getDate() - date1.getDate();
+
+            if (days < 0) {
+                months--;
+                // الحصول على عدد أيام الشهر السابق
+                const previousMonth = new Date(date2.getFullYear(), date2.getMonth(), 0).getDate();
+                days += previousMonth;
+            }
+
+            if (months < 0) {
+                years--;
+                months += 12;
+            }
+
+            let resultText = "";
+            if (years > 0) resultText += `${years} سنة/سنوات `;
+            if (months > 0) resultText += `${years > 0 ? 'و ' : ''}${months} شهر/أشهر `;
+            if (days > 0 || (years === 0 && months === 0)) resultText += `${(years > 0 || months > 0) ? 'و ' : ''}${days} يوم/أيام`;
+
+            document.getElementById('diff-text').innerText = resultText;
+            document.getElementById('total-days').innerText = totalDays.toLocaleString('en-US');
+            
+            resultBox.style.display = 'block';
+        }
+    </script>
+</body>
+</html>
