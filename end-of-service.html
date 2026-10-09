@@ -1,0 +1,101 @@
+<!DOCTYPE html>
+<html lang="ar" dir="rtl">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>حاسبة مكافأة نهاية الخدمة - حاسبها</title>
+    <style>
+        body { font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif; background-color: #f4f7f6; margin: 0; padding: 20px; }
+        .container { max-width: 500px; margin: auto; background: white; padding: 25px; border-radius: 12px; box-shadow: 0 4px 10px rgba(0,0,0,0.1); }
+        h1 { text-align: center; color: #2c3e50; font-size: 24px; margin-bottom: 5px; }
+        .subtitle { text-align: center; color: #7f8c8d; font-size: 14px; margin-top: 0; margin-bottom: 25px; }
+        label { display: block; margin-top: 15px; margin-bottom: 8px; font-weight: bold; color: #34495e; }
+        input, select { width: 100%; padding: 12px; border: 1px solid #ced4da; border-radius: 6px; box-sizing: border-box; font-size: 16px; margin-bottom: 10px; }
+        input:focus, select:focus { border-color: #3498db; outline: none; }
+        button { width: 100%; padding: 14px; margin-top: 15px; background-color: #2980b9; color: white; border: none; border-radius: 6px; font-size: 18px; font-weight: bold; cursor: pointer; }
+        button:hover { background-color: #2471a3; }
+        .result { margin-top: 25px; padding: 15px; background-color: #ebf5fb; border-radius: 8px; border: 1px solid #aed6f1; display: none; text-align: center; }
+        .error { color: #e74c3c; font-size: 14px; margin-top: 5px; display: none; font-weight: bold; }
+        .disclaimer { font-size: 12px; color: #95a5a6; margin-top: 25px; text-align: justify; line-height: 1.5; }
+        .ad-space { background: #ecf0f1; text-align: center; padding: 15px; margin-top: 25px; border: 2px dashed #bdc3c7; border-radius: 8px; color: #7f8c8d; font-size: 14px; }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <h1>حاسبة مكافأة نهاية الخدمة</h1>
+        <p class="subtitle">حسب نظام العمل السعودي</p>
+
+        <label for="salary">الراتب الأخير (الأساسي + البدلات):</label>
+        <input type="number" id="salary" inputmode="numeric" placeholder="مثال: 8000" required>
+        <div id="error-msg" class="error">الرجاء إدخال راتب ومدة خدمة صحيحة.</div>
+
+        <label for="years">عدد سنوات الخدمة:</label>
+        <input type="number" id="years" inputmode="numeric" placeholder="مثال: 5" required>
+
+        <label for="reason">سبب انتهاء العلاقة العمالية:</label>
+        <select id="reason">
+            <option value="termination">إنهاء العقد من جهة العمل / انتهاء العقد المحدد</option>
+            <option value="resignation">استقالة الموظف</option>
+        </select>
+
+        <button onclick="calculateReward()">احسب المكافأة</button>
+
+        <div id="result-box" class="result">
+            <p style="font-size: 18px; color: #2c3e50;">المكافأة المستحقة:</p>
+            <p style="font-size: 24px; color: #2980b9; font-weight: bold; margin: 10px 0;"><strong id="final-reward">0</strong> ريال</p>
+        </div>
+
+        <div class="ad-space">
+            مساحة مخصصة لإعلان Adsterra
+        </div>
+
+        <div class="disclaimer">
+            * إخلاء مسؤولية: الحسبة مبنية على القواعد العامة للمادتين 84 و85 من نظام العمل السعودي (نصف راتب لأول 5 سنوات، وراتب كامل لما زاد عنها، مع تطبيق نسب الاستقالة). هذه الحاسبة لا تعتبر مستنداً قانونياً رسمياً.
+        </div>
+    </div>
+
+    <script>
+        function calculateReward() {
+            const salary = parseFloat(document.getElementById('salary').value) || 0;
+            const years = parseFloat(document.getElementById('years').value) || 0;
+            const reason = document.getElementById('reason').value;
+            
+            const errorBox = document.getElementById('error-msg');
+            const resultBox = document.getElementById('result-box');
+
+            if (salary <= 0 || years < 0) {
+                errorBox.style.display = 'block';
+                resultBox.style.display = 'none';
+                return;
+            }
+            errorBox.style.display = 'none';
+
+            let baseReward = 0;
+            
+            // حساب الأساس: نصف راتب لأول 5 سنوات، وراتب كامل لما زاد
+            if (years <= 5) {
+                baseReward = salary * 0.5 * years;
+            } else {
+                baseReward = (salary * 0.5 * 5) + (salary * (years - 5));
+            }
+
+            let finalReward = baseReward;
+
+            // حساب الخصم في حال الاستقالة
+            if (reason === 'resignation') {
+                if (years < 2) {
+                    finalReward = 0;
+                } else if (years >= 2 && years < 5) {
+                    finalReward = baseReward / 3;
+                } else if (years >= 5 && years < 10) {
+                    finalReward = (baseReward * 2) / 3;
+                }
+                // إذا كانت 10 سنوات فأكثر، يستحق المكافأة كاملة
+            }
+
+            document.getElementById('final-reward').innerText = finalReward.toLocaleString('en-US', {minimumFractionDigits: 2, maximumFractionDigits: 2});
+            resultBox.style.display = 'block';
+        }
+    </script>
+</body>
+</html>
