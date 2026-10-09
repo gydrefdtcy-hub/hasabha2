@@ -1,0 +1,77 @@
+<!DOCTYPE html>
+<html lang="ar" dir="rtl">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>حاسبة المعدل الجامعي (GPA) - حاسبها</title>
+    <style>
+        :root {
+            --primary: #2980b9;
+            --primary-hover: #2471a3;
+            --bg: #f4f7f6;
+            --text-dark: #2c3e50;
+            --border: #ced4da;
+        }
+        body { font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif; background-color: var(--bg); margin: 0; padding: 20px; }
+        .container { max-width: 550px; margin: auto; background: white; padding: 25px; border-radius: 12px; box-shadow: 0 4px 15px rgba(0,0,0,0.05); }
+        h1 { text-align: center; color: var(--text-dark); font-size: 24px; margin-bottom: 5px; }
+        .subtitle { text-align: center; color: #7f8c8d; font-size: 14px; margin-top: 0; margin-bottom: 25px; }
+        
+        .course-row { display: flex; gap: 10px; margin-bottom: 15px; align-items: center; background: #fdfdfd; padding: 10px; border-radius: 8px; border: 1px solid #eee; }
+        .course-row input, .course-row select { width: 100%; padding: 10px; border: 1px solid var(--border); border-radius: 6px; font-size: 15px; }
+        .course-row input:focus, .course-row select:focus { border-color: var(--primary); outline: none; }
+        
+        .btn-add { background-color: #27ae60; color: white; border: none; padding: 8px 15px; border-radius: 6px; cursor: pointer; font-weight: bold; margin-bottom: 20px; width: auto; font-size: 14px; }
+        .btn-add:hover { background-color: #219150; }
+        
+        .btn-remove { background-color: #e74c3c; color: white; border: none; padding: 10px 15px; border-radius: 6px; cursor: pointer; font-weight: bold; }
+        
+        .btn-calc { width: 100%; padding: 14px; background-color: var(--primary); color: white; border: none; border-radius: 6px; font-size: 18px; font-weight: bold; cursor: pointer; transition: 0.3s; }
+        .btn-calc:hover { background-color: var(--primary-hover); }
+        
+        .result { margin-top: 25px; padding: 20px; background-color: #ebf5fb; border-radius: 8px; border: 1px solid #aed6f1; display: none; text-align: center; animation: fadeIn 0.4s; }
+        @keyframes fadeIn { from { opacity: 0; transform: translateY(-5px); } to { opacity: 1; transform: translateY(0); } }
+        
+        .result p { margin: 10px 0; font-size: 16px; color: var(--text-dark); }
+        .gpa-score { font-size: 32px; font-weight: bold; color: var(--primary); display: block; margin-top: 10px; }
+        
+        .error { color: #e74c3c; font-size: 14px; margin-top: 8px; display: none; font-weight: bold; text-align: center; }
+        .ad-space { background: #ecf0f1; text-align: center; padding: 15px; margin-top: 25px; border: 2px dashed #bdc3c7; border-radius: 8px; color: #7f8c8d; font-size: 14px; }
+        .disclaimer { font-size: 12px; color: #95a5a6; margin-top: 20px; text-align: center; }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <h1>حاسبة المعدل الفصلي (GPA)</h1>
+        <p class="subtitle">احسب معدلك من 5.0 بخطوات بسيطة</p>
+
+        <div id="courses-container">
+            <!-- سيتم إضافة المواد هنا -->
+        </div>
+
+        <button class="btn-add" onclick="addCourse()">+ إضافة مادة</button>
+        <div id="error-msg" class="error">الرجاء إدخال الساعات والدرجات بشكل صحيح لجميع المواد.</div>
+        <button class="btn-calc" onclick="calculateGPA()">احسب المعدل</button>
+
+        <div id="result-box" class="result">
+            <p>مجموع الساعات: <strong id="total-hours">0</strong></p>
+            <p>المعدل الفصلي:</p>
+            <span class="gpa-score" id="gpa-result">0.00</span>
+        </div>
+
+        <div class="ad-space">
+            مساحة مخصصة لإعلان Adsterra
+        </div>
+        
+        <div class="disclaimer">
+            * الحسبة تعتمد على النظام الشائع: أ+ (5.00)، أ (4.75)، ب+ (4.50)، ب (4.00)، ج+ (3.50)، ج (3.00)، د+ (2.50)، د (2.00)، هـ (1.00).
+        </div>
+    </div>
+
+    <script>
+        const coursesContainer = document.getElementById('courses-container');
+        
+        // خيارات التقديرات
+        const gradeOptions = `
+            <option value="" disabled selected>التقدير</option>
+            <option value="5.00">أ+ (95-100)</option>
