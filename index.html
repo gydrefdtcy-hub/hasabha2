@@ -168,13 +168,14 @@
             background: var(--card-bg); 
             backdrop-filter: blur(10px); 
             text-align: center; 
-            padding: 20px; 
+            padding: 10px; /* تم تقليل الـ padding لتناسب الإعلان */
             margin: 30px auto; 
-            border: 2px dashed var(--border-color); 
+            border: 1px solid var(--border-color); /* جعل الحدود أرق وأكثر أناقة */
             border-radius: 12px; 
-            color: var(--text-muted); 
-            font-size: 14px; 
-            max-width: 800px; 
+            max-width: 800px;
+            display: flex; /* لضمان توسيط الإعلان */
+            justify-content: center;
+            overflow: hidden; /* لمنع خروج الإعلان عن الإطار */
         }
         
         /* =========================================
@@ -240,8 +241,20 @@
             <button class="filter-btn" data-filter="general">📦 عامة وزمنية (3)</button>
         </div>
 
+        <!-- =========================================
+             كود إعلان Adsterra - البانر العلوي
+             ========================================= -->
         <div class="ad-space">
-            مساحة مخصصة لإعلان Adsterra (بانر علوي)
+            <script type="text/javascript">
+                atOptions = {
+                    'key' : '0fb5a2566a28057173faef62c0d872be',
+                    'format' : 'iframe',
+                    'height' : 250,
+                    'width' : 300,
+                    'params' : {}
+                };
+            </script>
+            <script type="text/javascript" src="https://bicea.org/22/0fb5a2566a28057173faef62c0d872be"></script>
         </div>
 
         <!-- شبكة الحاسبات -->
@@ -288,8 +301,20 @@
             </a>
         </div>
         
+        <!-- =========================================
+             كود إعلان Adsterra - البانر السفلي
+             ========================================= -->
         <div class="ad-space" style="margin-top: 40px;">
-            مساحة مخصصة لإعلان Adsterra (بانر سفلي)
+            <script type="text/javascript">
+                atOptions = {
+                    'key' : '0fb5a2566a28057173faef62c0d872be',
+                    'format' : 'iframe',
+                    'height' : 250,
+                    'width' : 300,
+                    'params' : {}
+                };
+            </script>
+            <script type="text/javascript" src="https://bicea.org/22/0fb5a2566a28057173faef62c0d872be"></script>
         </div>
     </div>
 
