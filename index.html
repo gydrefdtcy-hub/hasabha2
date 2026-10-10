@@ -162,20 +162,22 @@
         .card p { margin: 0; font-size: 14px; color: var(--text-muted); line-height: 1.6; }
         
         /* =========================================
-           7. المساحات الإعلانية
+           7. المساحات الإعلانية (تم التعديل لتكون قابلة للنقر)
            ========================================= */
         .ad-space { 
             background: var(--card-bg); 
             backdrop-filter: blur(10px); 
             text-align: center; 
-            padding: 10px; /* تم تقليل الـ padding لتناسب الإعلان */
+            padding: 10px; 
             margin: 30px auto; 
-            border: 1px solid var(--border-color); /* جعل الحدود أرق وأكثر أناقة */
+            border: 1px solid var(--border-color); 
             border-radius: 12px; 
             max-width: 800px;
-            display: flex; /* لضمان توسيط الإعلان */
+            display: flex; 
             justify-content: center;
-            overflow: hidden; /* لمنع خروج الإعلان عن الإطار */
+            overflow: hidden; 
+            position: relative; /* إضافة لترتيب الطبقات */
+            z-index: 99; /* رفع الإعلان فوق باقي العناصر ليكون قابلاً للنقر */
         }
         
         /* =========================================
